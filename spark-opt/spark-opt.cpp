@@ -30,8 +30,6 @@ int main(int argc, char **argv) {
         pm.addPass(mlir::spark::createSparkSwitchBarFoo());
       });
 
-  // TODO: Register spark passes here.
-
   mlir::DialectRegistry registry;
   registry.insert<mlir::spark::SparkDialect,
                   mlir::arith::ArithDialect, mlir::func::FuncDialect>();
