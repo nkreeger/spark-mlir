@@ -30,3 +30,51 @@ cmake -G Ninja `$LLVM_SRC_DIR/llvm` \
 cmake --build . --target check-spark
 ```
 Here, `$LLVM_SRC_DIR` needs to point to the root of the monorepo.
+
+## Running the Spark Interpreter
+
+The `spark-run` tool is a simple interpreter that executes MLIR files containing Spark dialect operations. The runtime implements `spark.foo` as a squaring operation (returns `input * input`).
+
+### Basic Usage
+
+```sh
+# Run a simple test (computes 5²)
+build/bin/spark-run test-run.mlir --function=test_spark_op --args=5
+# Output: Final result: 25
+
+# Run with multiple arguments (computes 3² + 4²)
+build/bin/spark-run test-run.mlir --function=test_multiple --args=3 --args=4
+# Output: Final result: 25
+
+# Run a chained operation (computes (2²)²)
+build/bin/spark-run test-run.mlir --function=test_chain --args=2
+# Output: Final result: 16
+
+# Run with a constant value (computes 5²)
+build/bin/spark-run test-run.mlir --function=test_constant
+# Output: Final result: 25
+```
+
+### Using example.mlir
+
+The `example.mlir` file contains additional test functions. Since it includes unregistered dialects, use the `--allow-unregistered-dialect` flag:
+
+```sh
+# Run a simple spark.foo operation
+build/bin/spark-run example.mlir --function=test_spark_op --args=10 --allow-unregistered-dialect
+# Output: Final result: 100
+
+# Run complex example with multiple operations
+build/bin/spark-run example.mlir --function=complex_example --args=7 --args=2 --allow-unregistered-dialect
+# Output: Final result: 53 (7² + 2² = 49 + 4)
+```
+
+### Supported Operations
+
+The interpreter currently supports:
+- `spark.foo` - Squares the input value
+- `arith.constant` - Integer constants
+- `arith.addi` - Integer addition
+- `func.return` - Return values from functions
+
+The interpreter prints an execution trace showing each operation and its result.
