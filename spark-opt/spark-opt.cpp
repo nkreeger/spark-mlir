@@ -11,6 +11,7 @@
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
+#include "mlir/Pass/PassManager.h"
 #include "mlir/Support/FileUtilities.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
 
@@ -20,6 +21,15 @@
 int main(int argc, char **argv) {
   mlir::registerAllPasses();
   mlir::spark::registerPasses();
+
+  // Register a default Spark pass pipeline
+  mlir::PassPipelineRegistration<>(
+      "spark-default",
+      "Default Spark transformation pipeline",
+      [](mlir::OpPassManager &pm) {
+        pm.addPass(mlir::spark::createSparkSwitchBarFoo());
+      });
+
   // TODO: Register spark passes here.
 
   mlir::DialectRegistry registry;
