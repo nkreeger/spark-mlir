@@ -40,4 +40,30 @@ def Spark_FooOp : Spark_Op<"foo", [Pure,
     }];
 }
 
+def Spark_BarkOp : Spark_Op<"bark", [Pure,
+                                             SameOperandsAndResultType]> {
+    let summary = "Negates an integer value.";
+    let description = [{
+        The `spark.bark` operation takes an integer argument and returns
+        its negation.
+
+        This operation has no side effects.
+
+        Example:
+
+        ```mlir
+        %0 = arith.constant 5 : i32
+        // Apply the bark operation to %0
+        %1 = spark.bark %0 : i32  // Returns -5
+        ```
+    }];
+
+    let arguments = (ins I32:$input);
+    let results = (outs I32:$res);
+
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input)
+    }];
+}
+
 #endif // SPARK_OPS
