@@ -71,6 +71,8 @@ public:
           handleConstant(constantOp);
         } else if (auto fooOp = dyn_cast<spark::FooOp>(op)) {
           handleFoo(fooOp);
+        } else if (auto barkOp = dyn_cast<spark::BarkOp>(op)) {
+          handleBark(barkOp);
         } else if (auto addOp = dyn_cast<arith::AddIOp>(op)) {
           handleAdd(addOp);
         } else if (auto returnOp = dyn_cast<func::ReturnOp>(op)) {
@@ -101,6 +103,14 @@ private:
     int32_t result = input * input;
     valueMap[op.getRes()] = result;
     llvm::outs() << "  spark.foo(" << input << ") = " << result << "\n";
+  }
+
+  void handleBark(spark::BarkOp op) {
+    int32_t input = valueMap[op.getInput()];
+    // Implement the runtime behavior: negate the input
+    int32_t result = -input;
+    valueMap[op.getRes()] = result;
+    llvm::outs() << "  spark.bark(" << input << ") = " << result << "\n";
   }
 
   void handleAdd(arith::AddIOp op) {
